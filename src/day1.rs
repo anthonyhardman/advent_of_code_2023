@@ -1,21 +1,12 @@
 fn part_one(input: &str) -> i64 {
-    let mut sum = 0;
-
-    for line in input.lines() {
+    input.lines().map(|line| {
         let nums: Vec<char> = line.chars().filter(|c| c.is_digit(10)).collect();
 
-        let first_digit = nums[0];
-        let second_digit = nums[nums.len() - 1];
+        let first_digit = nums.first().unwrap();
+        let last_digit = nums.last().unwrap();
 
-        let mut full_num_string = String::new();
-
-        full_num_string.push(first_digit);
-        full_num_string.push(second_digit);
-
-        sum += full_num_string.parse::<i64>().expect("An integer");
-    }
-
-    return sum;
+        format!("{first_digit}{last_digit}").parse::<i64>().unwrap()
+    }).sum()
 }
 
 fn string_to_digit(digit_string: &str) -> i64 {
@@ -34,11 +25,10 @@ fn string_to_digit(digit_string: &str) -> i64 {
 }
 
 fn part_two(input: &str) -> i64 {
-    let mut sum = 0;
     let digit_pattern = r"\d|one|two|three|four|five|six|seven|eight|nine";
     let re = regex::Regex::new(digit_pattern).unwrap();
-
-    for line in input.lines() {
+    
+    input.lines().map(|line| {
         let mut matches: Vec<i64> = Vec::new(); 
 
         let mut offset  = 0;
@@ -47,21 +37,11 @@ fn part_two(input: &str) -> i64 {
             matches.push(string_to_digit(mat.as_str()));
         }
 
-        let first_digit = matches[0];
-        let last_digit = if matches.len() > 1 {
-            matches[matches.len() - 1]
-        } else {
-            matches[0]
-        };
-        
-        let full_num_string = format!("{}{}", first_digit, last_digit);
+        let first_digit = matches.first().unwrap();
+        let last_digit = matches.last().unwrap();
 
-        sum += full_num_string
-            .parse::<i64>()
-            .expect("Expected a valid integer");
-    }
-
-    sum
+        format!("{first_digit}{last_digit}").parse::<i64>().unwrap()
+    }).sum()
 }
 
 pub fn solve(input: &str) -> (i64, i64) {

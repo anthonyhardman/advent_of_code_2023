@@ -10,26 +10,25 @@ fn part_one(input: &str) -> i64 {
     let symbol_re = regex::Regex::new(r"[^.\d\n]").unwrap();
     let symbols: Vec<_> = symbol_re.find_iter(input).collect();
 
-    let mut parts = HashMap::<(usize, usize), i64>::new();
+    symbols
+        .iter()
+        .flat_map(|symbol| {
+            let symbol_pos = symbol.start();
+            let neighbors = get_neighbors(symbol_pos, line_length, number_of_lines);
 
-    for symbol in symbols.iter() {
-        let symbol_pos = symbol.start();
-        let neighbors = get_neighbors(symbol_pos, line_length, number_of_lines);
-
-        nums.iter()
-            .filter(|&num| {
-                neighbors
-                    .iter()
-                    .any(|&ne| ne >= num.start() && ne < num.end())
-            })
-            .for_each(|&n| {
-                if let Ok(num) = n.as_str().parse::<i64>() {
-                    parts.insert((n.start(), n.end()), num);
-                }
-            });
-    }
-
-    parts.values().sum()
+            nums.iter()
+                .filter(move |num| {
+                    neighbors
+                        .iter()
+                        .any(|&ne| ne >= num.start() && ne < num.end())
+                })
+                .filter_map(|n| {
+                    n.as_str().parse::<i64>().ok().map(|num| ((n.start(), n.end()), num))
+                })
+        })
+        .collect::<HashMap<_, _>>()
+        .values()
+        .sum()
 }
 
 fn part_two(input: &str) -> i64 {
@@ -44,22 +43,17 @@ fn part_two(input: &str) -> i64 {
 
     symbols
         .iter()
-        .filter_map(|symbol| {
+        .map(|symbol| {
             let symbol_pos = symbol.start();
             let neighbors = get_neighbors(symbol_pos, line_length, number_of_lines);
 
-            let gear_ratio_factors: Vec<_> = nums
-                .iter()
+            nums.iter()
                 .filter(|n| neighbors.iter().any(|&ne| ne >= n.start() && ne < n.end()))
                 .map(|a| a.as_str().parse::<i64>().unwrap())
-                .collect();
-
-            if gear_ratio_factors.len() == 2 {
-                Some(gear_ratio_factors[0] * gear_ratio_factors[1])
-            } else {
-                None
-            }
+                .collect::<Vec<_>>()
         })
+        .filter(|grf| grf.len() == 2)
+        .map(|grf| grf[0] * grf[1])
         .sum()
 }
 
