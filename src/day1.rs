@@ -65,5 +65,5 @@ fn part_two(input: &str) -> i64 {
 }
 
 pub fn solve(input: &str) -> (i64, i64) {
-    return (part_one(input), part_two(input));
+    (part_one(input), part_two(input))
 }
