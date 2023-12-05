@@ -1,6 +1,7 @@
 mod day1;
 mod day2;
 mod day3;
+mod day4;
 use clap::Parser;
 
 #[derive(Parser, Debug)]
@@ -26,6 +27,7 @@ fn main() {
         "day1" => run_day(&day1::solve, &input_path),
         "day2" => run_day(&day2::solve, &input_path),
         "day3" => run_day(&day3::solve, &input_path),
+        "day4" => run_day(&day4::solve, &input_path),
         _ => eprintln!("Invalid day specified."),
     }
 }
